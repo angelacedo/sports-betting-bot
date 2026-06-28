@@ -58,6 +58,31 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
+### 4. Run the ETL Pipeline
+
+The ETL pipeline extracts data from both APIs, merges them, and loads to PostgreSQL:
+
+```bash
+# Set your API keys in .env first
+python -m src.etl.pipeline
+```
+
+**Pipeline Steps:**
+1. **Extract fixtures** from API-Football (match context, stats, status)
+2. **Extract odds** from The Odds API (bookmakers, markets, prices)
+3. **Fuzzy match** team names between both APIs
+4. **Filter** postponed/cancelled matches
+5. **UPSERT** to PostgreSQL (avoids duplicates on repeated runs)
+6. **Cache** raw API responses in `/data/raw/` (respects rate limits)
+
+**Caching:** API responses are cached locally for 6 hours to avoid hitting rate limits. Cache files are stored in `data/raw/odds/` and `data/raw/stats/`.
+
+### 5. Run Tests
+
+```bash
+pytest tests/ -v
+```
+
 ## Environment Variables
 
 | Variable | Description |

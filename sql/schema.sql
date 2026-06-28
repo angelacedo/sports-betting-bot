@@ -85,7 +85,9 @@ CREATE TABLE match_stats (
     period          VARCHAR(16),
     stat_key        VARCHAR(64) NOT NULL,
     stat_value      JSONB NOT NULL,
-    recorded_at     TIMESTAMPTZ DEFAULT NOW()
+    recorded_at     TIMESTAMPTZ DEFAULT NOW(),
+    raw_api_data    JSONB,
+    UNIQUE(match_id, stat_key, period, recorded_at)
 );
 
 CREATE INDEX idx_match_stats_match ON match_stats(match_id);
@@ -102,7 +104,9 @@ CREATE TABLE odds_history (
     odds_decimal    NUMERIC(8, 4) NOT NULL,
     odds_implied    NUMERIC(6, 4),
     stake_limit     NUMERIC(12, 2),
-    fetched_at      TIMESTAMPTZ DEFAULT NOW()
+    fetched_at      TIMESTAMPTZ DEFAULT NOW(),
+    raw_api_data    JSONB,
+    UNIQUE(match_id, bookmaker_id, market_id, selection, fetched_at)
 );
 
 CREATE INDEX idx_odds_match       ON odds_history(match_id);
