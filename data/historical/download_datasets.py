@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 import requests
-from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
+from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 from tqdm import tqdm
 
 # Add parent directory to path
@@ -16,7 +16,6 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from src.utils.config import DATA_RAW_DIR
 from src.utils.logger import logger
-
 
 # League codes mapping
 LEAGUE_CODES = {

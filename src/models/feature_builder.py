@@ -4,15 +4,12 @@ Generates ML features from historical match data stored in PostgreSQL.
 Uses Polars for fast vectorized operations and creates training dataset.
 """
 
-from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
 
 import polars as pl
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from src.database.models import Base, League, Match, MatchStat, OddsHistory, Team
 from src.utils.config import DATA_PROCESSED_DIR, DATABASE_URL
 from src.utils.logger import logger
 
@@ -118,7 +115,7 @@ class FeatureBuilder:
         teams = set(df["home_team_name"].to_list() + df["away_team_name"].to_list())
         elo_ratings = {team: 1500.0 for team in teams}
 
-        K_FACTOR = 20
+        k_factor = 20
         elo_history = []
 
         for row in df.iter_rows(named=True):
@@ -144,8 +141,8 @@ class FeatureBuilder:
                 actual_home, actual_away = 0.5, 0.5
 
             # Update ratings
-            new_home_elo = home_elo + K_FACTOR * (actual_home - expected_home)
-            new_away_elo = away_elo + K_FACTOR * (actual_away - expected_away)
+            new_home_elo = home_elo + k_factor * (actual_home - expected_home)
+            new_away_elo = away_elo + k_factor * (actual_away - expected_away)
 
             elo_ratings[home_team] = new_home_elo
             elo_ratings[away_team] = new_away_elo

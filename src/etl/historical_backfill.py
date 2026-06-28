@@ -5,20 +5,17 @@ Uses Polars for fast CSV parsing and fuzzy matching for team name alignment.
 """
 
 import re
-from datetime import datetime, timezone
-from decimal import Decimal
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
 
 import polars as pl
 import requests
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
+from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 from thefuzz import fuzz, process
-from tqdm import tqdm
 
-from src.database.models import Base, League, Match, MatchStat, OddsHistory, Team
+from src.database.models import League, Match, Team
 from src.utils.config import DATA_RAW_DIR, DATABASE_URL
 from src.utils.logger import logger
 
@@ -159,11 +156,11 @@ class HistoricalBackfill:
                     pass
 
             # Set timezone to UTC
-            return parsed_date.replace(tzinfo=timezone.utc)
+            return parsed_date.replace(tzinfo=UTC)
 
         except Exception as e:
             logger.warning(f"Failed to parse date '{date_str}' time '{time_str}': {e}")
-            return datetime.now(timezone.utc)
+            return datetime.now(UTC)
 
     def _get_or_create_league(self, session, league_name: str) -> League:
         """Get or create league record."""
@@ -237,7 +234,7 @@ class HistoricalBackfill:
                         # Update existing
                         existing_match.home_score = home_score
                         existing_match.away_score = away_score
-                        existing_match.updated_at = datetime.now(timezone.utc)
+                        existing_match.updated_at = datetime.now(UTC)
                     else:
                         # Create new
                         match = Match(
