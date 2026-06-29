@@ -21,6 +21,10 @@ DATABASE_URL: str = os.getenv(
 # API Keys
 THE_ODDS_API_KEY: str = os.getenv("THE_ODDS_API_KEY", "")
 
+# Telegram
+TELEGRAM_BOT_TOKEN: str = os.getenv("TELEGRAM_BOT_TOKEN", "")
+TELEGRAM_CHAT_ID: str = os.getenv("TELEGRAM_CHAT_ID", "")
+
 # Paths
 PROJECT_ROOT: Path = _project_root
 DATA_RAW_DIR: Path = _project_root / "data" / "raw"

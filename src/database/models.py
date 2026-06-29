@@ -161,9 +161,42 @@ class OddsHistory(Base):
     odds_decimal = Column(Numeric(8, 4), nullable=False)
     odds_implied = Column(Numeric(6, 4))
     stake_limit = Column(Numeric(12, 2))
+    is_closing_line = Column(Boolean, default=False)
     fetched_at = Column(DateTime(timezone=True), default=datetime.utcnow)
     raw_api_data = Column(JSON)
 
     match = relationship("Match", back_populates="odds")
     bookmaker = relationship("Bookmaker", back_populates="odds")
     market = relationship("Market", back_populates="odds")
+
+
+class BotBet(Base):
+    """Bot betting record with tracking and analytics."""
+
+    __tablename__ = "bot_bets"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
+    match_id = Column(
+        UUID(as_uuid=True), ForeignKey("matches.id", ondelete="CASCADE"), nullable=False
+    )
+    market_id = Column(
+        UUID(as_uuid=True), ForeignKey("markets.id", ondelete="CASCADE"), nullable=False
+    )
+    selection = Column(String(64), nullable=False)
+    odds_decimal = Column(Numeric(8, 4), nullable=False)
+    stake = Column(Numeric(10, 2), nullable=False)
+    kelly_fraction = Column(Numeric(4, 2))
+    expected_value = Column(Numeric(8, 4))
+    closing_odds = Column(Numeric(8, 4))
+    clv = Column(Numeric(8, 4))
+    model_name = Column(String(64))
+    model_version = Column(String(16))
+    status = Column(String(32), default="pending")
+    placed_at = Column(DateTime(timezone=True))
+    settled_at = Column(DateTime(timezone=True))
+    pnl = Column(Numeric(10, 2))
+    notes = Column(Text)
+    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+
+    match = relationship("Match")
+    market = relationship("Market")

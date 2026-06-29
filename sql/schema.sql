@@ -90,6 +90,7 @@ CREATE TABLE odds_history (
     odds_decimal    NUMERIC(8, 4) NOT NULL,
     odds_implied    NUMERIC(6, 4),
     stake_limit     NUMERIC(12, 2),
+    is_closing_line BOOLEAN DEFAULT FALSE,
     fetched_at      TIMESTAMPTZ DEFAULT NOW(),
     raw_api_data    JSONB,
     UNIQUE(match_id, bookmaker_id, market_id, selection, fetched_at)
@@ -112,6 +113,8 @@ CREATE TABLE bot_bets (
     stake           NUMERIC(10, 2) NOT NULL,
     kelly_fraction  NUMERIC(4, 2),
     expected_value  NUMERIC(8, 4),
+    closing_odds    NUMERIC(8, 4),
+    clv             NUMERIC(8, 4),
     model_name      VARCHAR(64),
     model_version   VARCHAR(16),
     status          VARCHAR(32) DEFAULT 'pending',
