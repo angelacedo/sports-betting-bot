@@ -119,6 +119,8 @@ class Match(Base):
     status = Column(String(32), default="scheduled")
     home_score = Column(SmallInteger)
     away_score = Column(SmallInteger)
+    home_xg = Column(Numeric(5, 2))
+    away_xg = Column(Numeric(5, 2))
     season = Column(String(16))
     round = Column(String(16))
     created_at = Column(DateTime(timezone=True), default=datetime.utcnow)

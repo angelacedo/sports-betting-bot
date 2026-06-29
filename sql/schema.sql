@@ -66,6 +66,8 @@ CREATE TABLE matches (
     status          VARCHAR(32) DEFAULT 'scheduled',
     home_score      SMALLINT,
     away_score      SMALLINT,
+    home_xg         NUMERIC(5, 2),
+    away_xg         NUMERIC(5, 2),
     season          VARCHAR(16),
     round           VARCHAR(16),
     created_at      TIMESTAMPTZ DEFAULT NOW(),
