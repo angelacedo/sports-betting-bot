@@ -77,22 +77,6 @@ CREATE INDEX idx_matches_kickoff  ON matches(kickoff);
 CREATE INDEX idx_matches_status   ON matches(status);
 
 -- ------------------------------------------------------------
--- MATCH STATS
--- ------------------------------------------------------------
-CREATE TABLE match_stats (
-    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    match_id        UUID NOT NULL REFERENCES matches(id) ON DELETE CASCADE,
-    period          VARCHAR(16),
-    stat_key        VARCHAR(64) NOT NULL,
-    stat_value      JSONB NOT NULL,
-    recorded_at     TIMESTAMPTZ DEFAULT NOW(),
-    raw_api_data    JSONB,
-    UNIQUE(match_id, stat_key, period, recorded_at)
-);
-
-CREATE INDEX idx_match_stats_match ON match_stats(match_id);
-
--- ------------------------------------------------------------
 -- ODDS HISTORY
 -- ------------------------------------------------------------
 CREATE TABLE odds_history (

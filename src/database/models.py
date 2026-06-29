@@ -127,29 +127,7 @@ class Match(Base):
     league = relationship("League", back_populates="matches")
     home_team = relationship("Team", foreign_keys=[home_team_id], back_populates="home_matches")
     away_team = relationship("Team", foreign_keys=[away_team_id], back_populates="away_matches")
-    stats = relationship("MatchStat", back_populates="match", cascade="all, delete-orphan")
     odds = relationship("OddsHistory", back_populates="match", cascade="all, delete-orphan")
-
-
-class MatchStat(Base):
-    """Pre-match and in-match statistics (xG, shots, injuries, etc.)."""
-
-    __tablename__ = "match_stats"
-    __table_args__ = (
-        UniqueConstraint("match_id", "stat_key", "period", "recorded_at", name="uq_match_stat"),
-    )
-
-    id = Column(UUID(as_uuid=True), primary_key=True, default=generate_uuid)
-    match_id = Column(
-        UUID(as_uuid=True), ForeignKey("matches.id", ondelete="CASCADE"), nullable=False
-    )
-    period = Column(String(16))
-    stat_key = Column(String(64), nullable=False)
-    stat_value = Column(JSON, nullable=False)
-    recorded_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    raw_api_data = Column(JSON)
-
-    match = relationship("Match", back_populates="stats")
 
 
 class OddsHistory(Base):

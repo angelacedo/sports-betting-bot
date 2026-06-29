@@ -41,9 +41,7 @@ class OddsExtractor:
         """Check if cache exists and is within TTL."""
         if not cache_path.exists():
             return False
-        file_age_hours = (
-            datetime.now(UTC).timestamp() - cache_path.stat().st_mtime
-        ) / 3600
+        file_age_hours = (datetime.now(UTC).timestamp() - cache_path.stat().st_mtime) / 3600
         return file_age_hours < CACHE_TTL_HOURS
 
     @retry(
@@ -74,7 +72,7 @@ class OddsExtractor:
 
         return response.json()
 
-    def extract(self, sport_key: str = "soccer_spain_la_liga") -> pd.DataFrame:
+    def extract(self, sport_key: str = "soccer_epl") -> pd.DataFrame:
         """
         Extract odds data for a specific sport/league.
         Returns DataFrame with normalized odds data.

@@ -20,7 +20,6 @@ DATABASE_URL: str = os.getenv(
 
 # API Keys
 THE_ODDS_API_KEY: str = os.getenv("THE_ODDS_API_KEY", "")
-API_FOOTBALL_KEY: str = os.getenv("API_FOOTBALL_KEY", "")
 
 # Paths
 PROJECT_ROOT: Path = _project_root
@@ -35,11 +34,9 @@ LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
 # API Configuration
 THE_ODDS_API_BASE_URL: str = "https://api.the-odds-api.com/v4"
-API_FOOTBALL_BASE_URL: str = "https://v3.football.api-sports.io"
 
 # Rate limiting & caching
 CACHE_TTL_HOURS: int = 6
-API_FOOTBALL_DAILY_LIMIT: int = 100
 
 # Sharp bookmakers (low margin, high limit) - used for true probability estimation
 SHARP_BOOKMAKERS: set[str] = {
