@@ -141,6 +141,42 @@ class TelegramNotifier:
 
         return self.send_message(message)
 
+    def send_value_bets(self, value_bets: list[Any], fixtures_analyzed: int) -> bool:
+        """
+        Send value bets notification.
+
+        Args:
+            value_bets: List of ValueBet objects
+            fixtures_analyzed: Number of fixtures analyzed
+
+        Returns:
+            True if sent successfully
+        """
+        if not value_bets:
+            return self.send_message(
+                f"📊 *Análisis Diario*\n\n"
+                f"Se analizaron {fixtures_analyzed} partidos.\n"
+                f"No se encontraron value bets hoy."
+            )
+
+        message = f"🎯 *Value Bets Encontrados*\n\n"
+        message += f"📊 Partidos analizados: {fixtures_analyzed}\n"
+        message += f"✅ Value bets: {len(value_bets)}\n\n"
+
+        for i, bet in enumerate(value_bets[:5], 1):
+            message += f"*{i}. {bet.match}*\n"
+            message += f"   🎲 {bet.market} → {bet.selection}\n"
+            message += f"   💰 Cuota: {bet.odds_decimal:.2f}\n"
+            message += f"   📈 EV: {bet.expected_value:+.2%}\n"
+            message += f"   💵 Kelly: {bet.kelly_stake_pct:.2%}\n\n"
+
+        if len(value_bets) > 5:
+            message += f"_...y {len(value_bets) - 5} más_\n\n"
+
+        message += "_Generado automáticamente por Sports Betting Bot_"
+
+        return self.send_message(message)
+
     def send_settlement_notification(
         self,
         match: str,

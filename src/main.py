@@ -87,8 +87,11 @@ def _extract_odds_for_event(odds_df: pd.DataFrame, event_id: str) -> dict[str, A
     }
 
 
-def run() -> None:
-    """Main execution flow."""
+def run_analysis() -> dict[str, Any]:
+    """
+    Run daily analysis and return results.
+    Returns dict with fixtures_analyzed and value_bets.
+    """
     logger.info("=" * 60)
     logger.info("SPORTS BETTING BOT - Starting analysis")
     logger.info("=" * 60)
@@ -99,20 +102,20 @@ def run() -> None:
         logger.info("Models loaded successfully")
     except FileNotFoundError:
         logger.error("Models not found. Run training first: python -m src.models.predictor")
-        sys.exit(1)
+        return {"fixtures_analyzed": 0, "value_bets": []}
 
     try:
         extractor = OddsExtractor()
         odds_df = extractor.extract("soccer_epl")
         if odds_df.empty:
             logger.warning("No odds data available for today")
-            sys.exit(0)
+            return {"fixtures_analyzed": 0, "value_bets": []}
 
         events = extractor.get_unique_events(odds_df)
         logger.info(f"Found {len(events)} upcoming matches")
     except Exception as e:
         logger.error(f"Failed to fetch odds: {e}")
-        sys.exit(1)
+        return {"fixtures_analyzed": 0, "value_bets": []}
 
     engine = ValueBettingEngine()
     matches_for_ev: list[dict[str, Any]] = []
@@ -145,7 +148,7 @@ def run() -> None:
 
     if not matches_for_ev:
         logger.info("No matches with sufficient data for EV analysis")
-        sys.exit(0)
+        return {"fixtures_analyzed": 0, "value_bets": []}
 
     value_bets = engine.scan_all(matches_for_ev)
 
@@ -162,6 +165,13 @@ def run() -> None:
     logger.info("=" * 60)
     logger.info(f"Analyzed {len(matches_for_ev)} matches | Value bets: {len(value_bets)}")
     logger.info("=" * 60)
+
+    return {"fixtures_analyzed": len(matches_for_ev), "value_bets": value_bets}
+
+
+def run() -> None:
+    """Main execution flow."""
+    run_analysis()
 
 
 def main() -> None:
